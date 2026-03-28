@@ -29,3 +29,6 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# ignore task.md
+Documents/task.md
