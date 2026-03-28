@@ -49,6 +49,17 @@
   flex-shrink: 0;
 }
 
+.send-panel__clear-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
 .send-panel__format-btn {
   min-width: 80px;
   text-align: center;

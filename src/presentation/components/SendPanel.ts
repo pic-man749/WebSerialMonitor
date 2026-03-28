@@ -24,6 +24,7 @@ export class SendPanel {
   private readonly lineEndingSelect: HTMLSelectElement;
   private readonly sendBtn: HTMLButtonElement;
   private readonly warningEl: HTMLSpanElement;
+  private readonly clearCheckbox: HTMLInputElement;
 
   private format: InputFormat = 'text';
   private connected = false;
@@ -99,7 +100,16 @@ export class SendPanel {
     this.sendBtn.disabled = true;
     this.sendBtn.addEventListener('click', () => this._send());
 
-    inputRow.append(this.inputEl, this.sendBtn);
+    // Clear-after-send checkbox
+    const clearLabel = document.createElement('label');
+    clearLabel.className = 'send-panel__clear-label';
+    this.clearCheckbox = document.createElement('input');
+    this.clearCheckbox.type = 'checkbox';
+    this.clearCheckbox.checked = true;
+    const clearText = document.createTextNode('送信後クリア');
+    clearLabel.append(this.clearCheckbox, clearText);
+
+    inputRow.append(this.inputEl, this.sendBtn, clearLabel);
     this.el.append(header, inputRow);
 
     // Connection state listener
@@ -129,8 +139,10 @@ export class SendPanel {
     const text = this.inputEl.value;
     if (!text || !this.connected) return;
     this.callbacks?.onSend(text, this.format, this.lineEndingSelect.value as LineEnding);
-    this.inputEl.value = '';
-    this.warningEl.hidden = true;
+    if (this.clearCheckbox.checked) {
+      this.inputEl.value = '';
+      this.warningEl.hidden = true;
+    }
   }
 
   private _toggleFormat(): void {
