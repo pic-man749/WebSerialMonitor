@@ -19,6 +19,18 @@ import {
   BAUD_RATE_PRESETS,
   DEFAULT_SERIAL_CONFIG,
 } from '../../domain/models/SerialConfig.js';
+import { SettingsStore } from '../../infrastructure/SettingsStore.js';
+
+interface ConnectionSettings {
+  baudRate: string;
+  baudCustom: string;
+  dataBits: string;
+  stopBits: string;
+  parity: string;
+  flowControl: string;
+}
+
+const SETTINGS_KEY = 'connection';
 
 export interface ConnectionPanelCallbacks {
   onRequestPort: () => void;
@@ -135,6 +147,18 @@ export class ConnectionPanel {
 
     this.el.appendChild(row);
 
+    // Auto-save settings on change
+    const save = (): void => this._saveSettings();
+    this.baudSelect.addEventListener('change', save);
+    this.baudCustom.addEventListener('input', save);
+    this.dataBitsSelect.addEventListener('change', save);
+    this.stopBitsSelect.addEventListener('change', save);
+    this.paritySelect.addEventListener('change', save);
+    this.flowSelect.addEventListener('change', save);
+
+    // Restore persisted settings
+    this._restoreSettings();
+
     // Listen for state changes
     this.bus.on('connection:stateChanged', ({ state }) => {
       this._updateButtonState(state);
@@ -199,6 +223,31 @@ export class ConnectionPanel {
       select.appendChild(opt);
     }
     return select;
+  }
+
+  private _saveSettings(): void {
+    const settings: ConnectionSettings = {
+      baudRate: this.baudSelect.value,
+      baudCustom: this.baudCustom.value,
+      dataBits: this.dataBitsSelect.value,
+      stopBits: this.stopBitsSelect.value,
+      parity: this.paritySelect.value,
+      flowControl: this.flowSelect.value,
+    };
+    SettingsStore.save(SETTINGS_KEY, settings);
+  }
+
+  private _restoreSettings(): void {
+    const s = SettingsStore.load<ConnectionSettings>(SETTINGS_KEY);
+    if (!s) return;
+
+    this.baudSelect.value = s.baudRate;
+    this.baudCustom.hidden = s.baudRate !== 'custom';
+    if (s.baudCustom) this.baudCustom.value = s.baudCustom;
+    this.dataBitsSelect.value = s.dataBits;
+    this.stopBitsSelect.value = s.stopBits;
+    this.paritySelect.value = s.parity;
+    this.flowSelect.value = s.flowControl;
   }
 
   private _labeled(text: string, control: HTMLElement): HTMLElement {

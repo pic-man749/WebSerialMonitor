@@ -9,6 +9,15 @@
 import type { EventBus } from '../EventBus.js';
 import type { ConnectionState } from '../../application/ConnectionService.js';
 import type { InputFormat, LineEnding } from '../../domain/models/SendMessage.js';
+import { SettingsStore } from '../../infrastructure/SettingsStore.js';
+
+interface SendSettings {
+  format: InputFormat;
+  lineEnding: string;
+  clearAfterSend: boolean;
+}
+
+const SETTINGS_KEY = 'send';
 
 export interface SendPanelCallbacks {
   onSend: (text: string, format: InputFormat, lineEnding: LineEnding) => void;
@@ -112,6 +121,15 @@ export class SendPanel {
     inputRow.append(this.inputEl, this.sendBtn, clearLabel);
     this.el.append(header, inputRow);
 
+    // Auto-save settings on change
+    const save = (): void => this._saveSettings();
+    this.formatToggle.addEventListener('click', save);
+    this.lineEndingSelect.addEventListener('change', save);
+    this.clearCheckbox.addEventListener('change', save);
+
+    // Restore persisted settings
+    this._restoreSettings();
+
     // Connection state listener
     this.bus.on('connection:stateChanged', ({ state }) => {
       this._updateConnectionState(state);
@@ -169,5 +187,23 @@ export class SendPanel {
     this.connected = state === 'connected';
     this.sendBtn.disabled = !this.connected;
     this.inputEl.disabled = !this.connected;
+  }
+
+  private _saveSettings(): void {
+    const settings: SendSettings = {
+      format: this.format,
+      lineEnding: this.lineEndingSelect.value,
+      clearAfterSend: this.clearCheckbox.checked,
+    };
+    SettingsStore.save(SETTINGS_KEY, settings);
+  }
+
+  private _restoreSettings(): void {
+    const s = SettingsStore.load<SendSettings>(SETTINGS_KEY);
+    if (!s) return;
+
+    if (s.format !== this.format) this._toggleFormat();
+    this.lineEndingSelect.value = s.lineEnding;
+    this.clearCheckbox.checked = s.clearAfterSend;
   }
 }
