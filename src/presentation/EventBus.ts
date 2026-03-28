@@ -25,6 +25,8 @@ import type { PortInfo } from '../domain/interfaces/ISerialPort.js';
 export type EventMap = {
   /** Fired whenever the serial connection state changes. */
   'connection:stateChanged': { state: ConnectionState; error?: Error; portInfo?: PortInfo | null };
+  /** Fired when a serial port has been selected (but not yet opened). */
+  'connection:portSelected': { selected: boolean };
   /** Fired for every incoming data chunk from the port. */
   'serial:dataReceived': { chunk: ReceivedChunk };
   /** Fired after a message has been successfully written to the port. */

@@ -128,7 +128,12 @@ export class App {
     this.connectionPanel.setCallbacks({
       onRequestPort: () => {
         // Must be called inside a user gesture (click) for requestPort()
-        void this.connectionService.requestPort().catch((err: unknown) => {
+        void this.connectionService.requestPort().then(() => {
+          // Notify UI that a port was selected (getPort is null until connected,
+          // so check _selectedPort existence via getPreviousPorts).
+          const hasPort = this.connectionService.hasSelectedPort();
+          this.bus.emit('connection:portSelected', { selected: hasPort });
+        }).catch((err: unknown) => {
           console.error('[App] requestPort failed:', err);
         });
       },

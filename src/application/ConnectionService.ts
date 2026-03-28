@@ -55,6 +55,11 @@ export class ConnectionService {
     return this._activePort;
   }
 
+  /** Returns true if a port has been selected (but not necessarily opened). */
+  hasSelectedPort(): boolean {
+    return this._selectedPort !== null;
+  }
+
   // ---- Port selection --------------------------------------------------
 
   /**

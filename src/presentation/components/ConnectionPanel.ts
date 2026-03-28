@@ -41,6 +41,7 @@ export interface ConnectionPanelCallbacks {
 export class ConnectionPanel {
   private readonly el: HTMLElement;
 
+  private readonly portBtn: HTMLButtonElement;
   private readonly baudSelect: HTMLSelectElement;
   private readonly baudCustom: HTMLInputElement;
   private readonly dataBitsSelect: HTMLSelectElement;
@@ -51,6 +52,7 @@ export class ConnectionPanel {
   private readonly connectBtn: HTMLButtonElement;
   private readonly disconnectBtn: HTMLButtonElement;
 
+  private portSelected = false;
   private callbacks: ConnectionPanelCallbacks | null = null;
 
   constructor(private readonly bus: EventBus) {
@@ -63,11 +65,11 @@ export class ConnectionPanel {
     row.className = 'connection-panel__row';
 
     // Port select button
-    const portBtn = document.createElement('button');
-    portBtn.className = 'btn btn--ghost connection-panel__port-btn';
-    portBtn.textContent = 'ポート選択';
-    portBtn.type = 'button';
-    portBtn.addEventListener('click', () => this.callbacks?.onRequestPort());
+    this.portBtn = document.createElement('button');
+    this.portBtn.className = 'btn btn--ghost connection-panel__port-btn';
+    this.portBtn.textContent = 'ポート選択';
+    this.portBtn.type = 'button';
+    this.portBtn.addEventListener('click', () => this.callbacks?.onRequestPort());
 
     // Baud rate
     this.baudSelect = this._createSelect(
@@ -120,6 +122,7 @@ export class ConnectionPanel {
     this.connectBtn.className = 'btn btn--success connection-panel__connect-btn';
     this.connectBtn.type = 'button';
     this.connectBtn.textContent = '接続';
+    this.connectBtn.disabled = true;
     this.connectBtn.addEventListener('click', () => {
       this.callbacks?.onConnect(this.getConfig());
     });
@@ -134,7 +137,7 @@ export class ConnectionPanel {
     });
 
     row.append(
-      portBtn,
+      this.portBtn,
       this._labeled('ボーレート', this.baudSelect),
       this.baudCustom,
       this._labeled('データビット', this.dataBitsSelect),
@@ -162,6 +165,11 @@ export class ConnectionPanel {
     // Listen for state changes
     this.bus.on('connection:stateChanged', ({ state }) => {
       this._updateButtonState(state);
+    });
+
+    // Listen for port selection
+    this.bus.on('connection:portSelected', ({ selected }) => {
+      this._updatePortState(selected);
     });
   }
 
@@ -192,7 +200,7 @@ export class ConnectionPanel {
 
   private _updateButtonState(state: ConnectionState): void {
     const connected = state === 'connected';
-    this.connectBtn.disabled = connected;
+    this.connectBtn.disabled = connected || !this.portSelected;
     this.disconnectBtn.disabled = !connected;
 
     // Disable selectors while connected
@@ -202,6 +210,24 @@ export class ConnectionPanel {
       this.paritySelect, this.flowSelect,
     ];
     for (const s of selectors) s.disabled = connected;
+
+    // Reset port button style on disconnect
+    if (!connected && this.portSelected) {
+      this.portBtn.classList.add('connection-panel__port-btn--selected');
+    }
+  }
+
+  private _updatePortState(selected: boolean): void {
+    this.portSelected = selected;
+    if (selected) {
+      this.portBtn.classList.add('connection-panel__port-btn--selected');
+      this.portBtn.textContent = '\u2714 \u30dd\u30fc\u30c8\u9078\u629e\u6e08\u307f';
+      this.connectBtn.disabled = false;
+    } else {
+      this.portBtn.classList.remove('connection-panel__port-btn--selected');
+      this.portBtn.textContent = '\u30dd\u30fc\u30c8\u9078\u629e';
+      this.connectBtn.disabled = true;
+    }
   }
 
   private _createSelect(
