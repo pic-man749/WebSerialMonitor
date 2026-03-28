@@ -1,0 +1,101 @@
+/* ============================================================
+   ReceivePanel
+   ============================================================ */
+
+.receive-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.receive-panel__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ---- Panes ------------------------------------------------ */
+
+.receive-panel__pane {
+  overflow: auto;
+  min-width: 0;
+}
+
+.receive-panel__pane--text {
+  border-right: 1px solid var(--color-border);
+}
+
+.receive-panel__text-view {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-mono);
+  white-space: pre-wrap;
+  word-break: break-all;
+  tab-size: 4;
+  user-select: text;
+}
+
+.receive-panel__escape {
+  color: var(--color-escape);
+}
+
+/* ---- Resize handle ---------------------------------------- */
+
+.receive-panel__resize-handle {
+  width: 6px;
+  cursor: col-resize;
+  background-color: var(--color-border);
+  flex-shrink: 0;
+  z-index: var(--z-resize-handle);
+  transition: background-color var(--transition-fast);
+}
+
+.receive-panel__resize-handle:hover,
+.receive-panel__resize-handle:active {
+  background-color: var(--color-accent);
+}
+
+/* ---- HEX dump --------------------------------------------- */
+
+.receive-panel__hex-container {
+  overflow: auto;
+  height: 100%;
+}
+
+.receive-panel__hex-content {
+  position: relative;
+  width: 100%;
+}
+
+.receive-panel__hex-row {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: 0 var(--spacing-md);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  line-height: 20px;       /* must match HEX_ROW_HEIGHT constant */
+  white-space: pre;
+  width: max-content;
+  min-width: 100%;
+  user-select: text;
+}
+
+.receive-panel__hex-addr {
+  color: var(--color-address);
+  flex-shrink: 0;
+}
+
+.receive-panel__hex-bytes {
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+.receive-panel__hex-ascii {
+  color: var(--color-ascii);
+  flex-shrink: 0;
+}

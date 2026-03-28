@@ -1,0 +1,71 @@
+/* ============================================================
+   SendHistoryList
+   ============================================================ */
+
+.send-history {
+  flex-shrink: 0;
+}
+
+.send-history__toggle {
+  font-size: 0.65rem;
+}
+
+.send-history__list {
+  max-height: 160px;
+  overflow-y: auto;
+  transition: max-height var(--transition-normal), opacity var(--transition-normal);
+}
+
+.send-history__list[hidden] {
+  display: block;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.send-history__entry {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xs) var(--spacing-md);
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-mono);
+  transition: background-color var(--transition-fast);
+}
+
+.send-history__entry:hover,
+.send-history__entry:focus-visible {
+  background-color: var(--color-bg-input);
+  outline: none;
+}
+
+.send-history__ts {
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.send-history__text {
+  color: var(--color-text-primary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.send-history__hex {
+  color: var(--color-hex-value);
+  flex-shrink: 0;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.send-history__bytes {
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+  min-width: 48px;
+  text-align: right;
+}

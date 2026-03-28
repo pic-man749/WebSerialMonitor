@@ -1,0 +1,53 @@
+/* ============================================================
+   StatusBar
+   ============================================================ */
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-left: auto;
+  font-size: var(--font-size-sm);
+}
+
+.status-bar__indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast);
+}
+
+.status-bar__indicator--disconnected {
+  background-color: var(--color-text-secondary);
+}
+
+.status-bar__indicator--connected {
+  background-color: var(--color-success);
+  box-shadow: 0 0 6px var(--color-success);
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%, 100% { box-shadow: 0 0 4px var(--color-success); }
+  50%      { box-shadow: 0 0 10px var(--color-success); }
+}
+
+.status-bar__indicator--error {
+  background-color: var(--color-error);
+  box-shadow: 0 0 6px var(--color-error);
+}
+
+.status-bar__label {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.status-bar__detail {
+  color: var(--color-text-secondary);
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
