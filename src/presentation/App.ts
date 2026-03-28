@@ -75,10 +75,63 @@ export class App {
     this.statusBar.mount(this.root);        // header (outside main)
     this.connectionPanel.mount(main);
     this.receivePanel.mount(main);
+
+    // Vertical resize handle between receive and send panels
+    const vHandle = document.createElement('div');
+    vHandle.className = 'app-main__resize-handle';
+    main.appendChild(vHandle);
+
     this.sendPanel.mount(main);
     this.historyList.mount(main);
 
     this.root.appendChild(main);
+
+    this._initVerticalResize(main, vHandle);
+  }
+
+  // ==================================================================
+  //  Vertical resize between receive panel and send+history area
+  // ==================================================================
+
+  private _initVerticalResize(main: HTMLElement, handle: HTMLElement): void {
+    const receiveEl = main.querySelector('.receive-panel') as HTMLElement | null;
+    const historyListEl = main.querySelector('.send-history__list') as HTMLElement | null;
+    if (!receiveEl || !historyListEl) return;
+
+    let dragging = false;
+    let startY = 0;
+    let startReceiveH = 0;
+    let startHistoryH = 0;
+
+    const onMouseDown = (e: MouseEvent): void => {
+      e.preventDefault();
+      dragging = true;
+      startY = e.clientY;
+      startReceiveH = receiveEl.getBoundingClientRect().height;
+      startHistoryH = historyListEl.getBoundingClientRect().height;
+      document.body.style.cursor = 'row-resize';
+      document.body.style.userSelect = 'none';
+    };
+
+    const onMouseMove = (e: MouseEvent): void => {
+      if (!dragging) return;
+      const delta = e.clientY - startY;
+      const newReceiveH = Math.max(80, startReceiveH + delta);
+      const newHistoryH = Math.max(40, startHistoryH - delta);
+      receiveEl.style.flex = `0 0 ${newReceiveH}px`;
+      historyListEl.style.height = `${newHistoryH}px`;
+    };
+
+    const onMouseUp = (): void => {
+      if (!dragging) return;
+      dragging = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    handle.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   }
 
   // ==================================================================
@@ -128,7 +181,12 @@ export class App {
     this.connectionPanel.setCallbacks({
       onRequestPort: () => {
         // Must be called inside a user gesture (click) for requestPort()
-        void this.connectionService.requestPort().catch((err: unknown) => {
+        void this.connectionService.requestPort().then(() => {
+          // Notify UI that a port was selected (getPort is null until connected,
+          // so check _selectedPort existence via getPreviousPorts).
+          const hasPort = this.connectionService.hasSelectedPort();
+          this.bus.emit('connection:portSelected', { selected: hasPort });
+        }).catch((err: unknown) => {
           console.error('[App] requestPort failed:', err);
         });
       },

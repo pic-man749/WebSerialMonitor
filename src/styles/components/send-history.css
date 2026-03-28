@@ -11,17 +11,26 @@
 }
 
 .send-history__list {
-  max-height: 160px;
+  height: 140px;
   overflow-y: auto;
-  transition: max-height var(--transition-normal), opacity var(--transition-normal);
 }
 
 .send-history__list[hidden] {
   display: block;
-  max-height: 0;
+  height: 0;
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
+}
+
+.send-history__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  opacity: 0.5;
 }
 
 .send-history__entry {

@@ -12,8 +12,9 @@ import type { PortInfo } from '../../domain/interfaces/ISerialPort.js';
 
 export class StatusBar {
   private readonly el: HTMLElement;
-  private readonly indicatorEl: HTMLSpanElement;
-  private readonly labelEl: HTMLSpanElement;
+  private readonly badgeEl: HTMLSpanElement;
+  private readonly badgeDotEl: HTMLSpanElement;
+  private readonly badgeLabelEl: HTMLSpanElement;
   private readonly detailEl: HTMLSpanElement;
 
   constructor(private readonly bus: EventBus) {
@@ -31,17 +32,21 @@ export class StatusBar {
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
 
-    this.indicatorEl = document.createElement('span');
-    this.indicatorEl.className = 'status-bar__indicator status-bar__indicator--disconnected';
+    this.badgeEl = document.createElement('span');
+    this.badgeEl.className = 'status-bar__badge status-bar__badge--disconnected';
 
-    this.labelEl = document.createElement('span');
-    this.labelEl.className = 'status-bar__label';
-    this.labelEl.textContent = '未接続';
+    this.badgeDotEl = document.createElement('span');
+    this.badgeDotEl.className = 'status-bar__badge-dot';
+
+    this.badgeLabelEl = document.createElement('span');
+    this.badgeLabelEl.textContent = '未接続';
+
+    this.badgeEl.append(this.badgeDotEl, this.badgeLabelEl);
 
     this.detailEl = document.createElement('span');
     this.detailEl.className = 'status-bar__detail';
 
-    status.append(this.indicatorEl, this.labelEl, this.detailEl);
+    status.append(this.badgeEl, this.detailEl);
     this.el.append(title, status);
 
     this.bus.on('connection:stateChanged', ({ state, error, portInfo }) => {
@@ -55,23 +60,23 @@ export class StatusBar {
 
   update(state: ConnectionState, error?: Error, portInfo?: PortInfo | null): void {
     // Reset modifier classes
-    this.indicatorEl.className = 'status-bar__indicator';
+    this.badgeEl.className = 'status-bar__badge';
 
     switch (state) {
       case 'disconnected':
-        this.indicatorEl.classList.add('status-bar__indicator--disconnected');
-        this.labelEl.textContent = '未接続';
+        this.badgeEl.classList.add('status-bar__badge--disconnected');
+        this.badgeLabelEl.textContent = '未接続';
         this.detailEl.textContent = '';
         break;
       case 'connected': {
-        this.indicatorEl.classList.add('status-bar__indicator--connected');
-        this.labelEl.textContent = '接続中';
+        this.badgeEl.classList.add('status-bar__badge--connected');
+        this.badgeLabelEl.textContent = '接続中';
         this.detailEl.textContent = this._formatPortInfo(portInfo);
         break;
       }
       case 'error':
-        this.indicatorEl.classList.add('status-bar__indicator--error');
-        this.labelEl.textContent = 'エラー';
+        this.badgeEl.classList.add('status-bar__badge--error');
+        this.badgeLabelEl.textContent = 'エラー';
         this.detailEl.textContent = error?.message ?? '';
         break;
     }

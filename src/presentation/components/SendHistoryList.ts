@@ -62,6 +62,9 @@ export class SendHistoryList {
     this.listEl.setAttribute('role', 'list');
     this.listEl.setAttribute('aria-label', '送信履歴一覧');
 
+    // Empty placeholder
+    this._showEmptyPlaceholder();
+
     this.el.append(header, this.listEl);
 
     // Subscribe
@@ -79,6 +82,10 @@ export class SendHistoryList {
   }
 
   addEntry(msg: SendMessage): void {
+    // Remove empty placeholder if present
+    const placeholder = this.listEl.querySelector('.send-history__empty');
+    if (placeholder) placeholder.remove();
+
     const row = document.createElement('div');
     row.className = 'send-history__entry';
     row.setAttribute('role', 'listitem');
@@ -131,7 +138,15 @@ export class SendHistoryList {
 
   private _clear(): void {
     this.listEl.textContent = '';
+    this._showEmptyPlaceholder();
     this.callbacks?.onClear();
+  }
+
+  private _showEmptyPlaceholder(): void {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'send-history__empty';
+    placeholder.textContent = '送信履歴はありません';
+    this.listEl.appendChild(placeholder);
   }
 
   private _formatTime(d: Date): string {

@@ -30,6 +30,11 @@
   align-self: flex-end;
 }
 
+.connection-panel__port-btn--selected {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
 .connection-panel__baud-custom {
   width: 100px;
 }

@@ -68,8 +68,11 @@ ol {
   align-items: center;
   gap: var(--spacing-md);
   padding: var(--spacing-sm) var(--spacing-lg);
-  background-color: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(135deg, rgba(40, 40, 64, 0.95), rgba(30, 30, 46, 0.98));
+  border-bottom: 1px solid rgba(137, 180, 250, 0.12);
+  border-radius: var(--border-radius-md);
+  margin: var(--spacing-sm) var(--spacing-sm) 0;
+  box-shadow: var(--shadow-sm);
   flex-shrink: 0;
 }
 
@@ -85,13 +88,62 @@ ol {
   flex-direction: column;
   flex: 1;
   overflow: hidden;
-  gap: 0;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+}
+
+/* --- Vertical resize handle (between receive & send) ------- */
+.app-main__resize-handle {
+  height: 8px;
+  cursor: row-resize;
+  background-color: var(--color-bg-secondary);
+  border-radius: 4px;
+  flex-shrink: 0;
+  position: relative;
+  transition: background-color var(--transition-fast);
+}
+
+.app-main__resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--color-border) 0px,
+    var(--color-border) 3px,
+    transparent 3px,
+    transparent 6px
+  );
+  transition: background var(--transition-fast);
+}
+
+.app-main__resize-handle:hover,
+.app-main__resize-handle:active {
+  background-color: rgba(137, 180, 250, 0.08);
+}
+
+.app-main__resize-handle:hover::after,
+.app-main__resize-handle:active::after {
+  background: repeating-linear-gradient(
+    to right,
+    var(--color-accent) 0px,
+    var(--color-accent) 3px,
+    transparent 3px,
+    transparent 6px
+  );
 }
 
 /* --- Common Panel ------------------------------------------ */
 .panel {
   background-color: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
   flex-shrink: 0;
 }
 
@@ -102,7 +154,8 @@ ol {
   padding: var(--spacing-xs) var(--spacing-md);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(135deg, rgba(40, 40, 64, 0.6), transparent);
+  border-bottom: 1px solid rgba(69, 71, 90, 0.5);
 }
 
 .panel__title {
@@ -175,34 +228,47 @@ ol {
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-sm);
   font-weight: 500;
-  transition: background-color var(--transition-fast), opacity var(--transition-fast);
+  transition: background-color var(--transition-fast),
+              opacity var(--transition-fast),
+              transform var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .btn--primary {
-  background-color: var(--color-accent);
+  background: linear-gradient(135deg, #89b4fa, #74c7ec);
   color: var(--color-bg-primary);
 }
 
 .btn--primary:hover:not(:disabled) {
-  background-color: #74a8f8;
+  background: linear-gradient(135deg, #74a8f8, #63bce0);
 }
 
 .btn--success {
-  background-color: var(--color-success);
+  background: linear-gradient(135deg, #a6e3a1, #94e2d5);
   color: var(--color-bg-primary);
 }
 
 .btn--success:hover:not(:disabled) {
-  background-color: #8fd48a;
+  background: linear-gradient(135deg, #8fd48a, #80d6c8);
 }
 
 .btn--danger {
-  background-color: var(--color-error);
+  background: linear-gradient(135deg, #f38ba8, #eba0ac);
   color: var(--color-bg-primary);
 }
 
 .btn--danger:hover:not(:disabled) {
-  background-color: #f07090;
+  background: linear-gradient(135deg, #f07090, #e58e9a);
 }
 
 .btn--ghost {

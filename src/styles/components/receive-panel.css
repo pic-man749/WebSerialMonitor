@@ -8,6 +8,10 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .receive-panel__body {
@@ -47,17 +51,48 @@
 /* ---- Resize handle ---------------------------------------- */
 
 .receive-panel__resize-handle {
-  width: 6px;
+  width: 8px;
   cursor: col-resize;
-  background-color: var(--color-border);
+  background-color: var(--color-bg-secondary);
   flex-shrink: 0;
   z-index: var(--z-resize-handle);
+  position: relative;
   transition: background-color var(--transition-fast);
+}
+
+.receive-panel__resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 32px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--color-border) 0px,
+    var(--color-border) 3px,
+    transparent 3px,
+    transparent 6px
+  );
+  transition: background var(--transition-fast);
 }
 
 .receive-panel__resize-handle:hover,
 .receive-panel__resize-handle:active {
-  background-color: var(--color-accent);
+  background-color: rgba(137, 180, 250, 0.08);
+}
+
+.receive-panel__resize-handle:hover::after,
+.receive-panel__resize-handle:active::after {
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--color-accent) 0px,
+    var(--color-accent) 3px,
+    transparent 3px,
+    transparent 6px
+  );
 }
 
 /* ---- HEX dump --------------------------------------------- */

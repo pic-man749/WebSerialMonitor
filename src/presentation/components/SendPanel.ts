@@ -65,6 +65,7 @@ export class SendPanel {
     // Line ending select
     this.lineEndingSelect = document.createElement('select');
     this.lineEndingSelect.className = 'form-select';
+    this.lineEndingSelect.id = 'send-line-ending';
     this.lineEndingSelect.setAttribute('aria-label', '改行コード');
     for (const [value, label] of [
       ['none', 'なし'],
@@ -83,7 +84,11 @@ export class SendPanel {
     this.warningEl.className = 'send-panel__warning';
     this.warningEl.hidden = true;
 
-    controls.append(this.formatToggle, this.lineEndingSelect, this.warningEl);
+    controls.append(
+      this._labeled('入力形式', this.formatToggle),
+      this._labeled('改行コード', this.lineEndingSelect),
+      this.warningEl,
+    );
     header.append(title, controls);
 
     // Input row
@@ -205,5 +210,17 @@ export class SendPanel {
     if (s.format !== this.format) this._toggleFormat();
     this.lineEndingSelect.value = s.lineEnding;
     this.clearCheckbox.checked = s.clearAfterSend;
+  }
+
+  private _labeled(text: string, control: HTMLElement): HTMLElement {
+    const wrapper = document.createElement('label');
+    wrapper.className = 'send-panel__field';
+
+    const span = document.createElement('span');
+    span.className = 'send-panel__field-label';
+    span.textContent = text;
+
+    wrapper.append(span, control);
+    return wrapper;
   }
 }
