@@ -75,3 +75,16 @@
   font-size: var(--font-size-xs);
   align-self: center;
 }
+
+.send-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.send-panel__field-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
