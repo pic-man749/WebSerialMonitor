@@ -62,6 +62,23 @@
 
 /* ---- HEX dump --------------------------------------------- */
 
+.receive-panel__hex-header {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: 0 var(--spacing-md);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+  white-space: pre;
+  width: max-content;
+  min-width: 100%;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  user-select: none;
+}
+
 .receive-panel__hex-container {
   overflow: auto;
   height: 100%;

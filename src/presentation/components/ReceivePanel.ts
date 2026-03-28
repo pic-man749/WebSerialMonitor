@@ -99,12 +99,32 @@ export class ReceivePanel {
     // Right: hex dump view (virtual-scrolled)
     this.rightPane = document.createElement('div');
     this.rightPane.className = 'receive-panel__pane receive-panel__pane--hex';
+
+    // Column address header
+    const hexHeader = document.createElement('div');
+    hexHeader.className = 'receive-panel__hex-header monospace';
+    const addrPlaceholder = document.createElement('span');
+    addrPlaceholder.className = 'receive-panel__hex-addr';
+    addrPlaceholder.textContent = '        ';
+    const colNumbers: string[] = [];
+    for (let c = 0; c < BYTES_PER_ROW; c++) {
+      colNumbers.push(c.toString(16).padStart(2, '0').toUpperCase());
+      if (c === 7) colNumbers.push('');
+    }
+    const colSpan = document.createElement('span');
+    colSpan.className = 'receive-panel__hex-bytes';
+    colSpan.textContent = colNumbers.join(' ');
+    const asciiLabel = document.createElement('span');
+    asciiLabel.className = 'receive-panel__hex-ascii';
+    asciiLabel.textContent = 'ASCII';
+    hexHeader.append(addrPlaceholder, colSpan, asciiLabel);
+
     this.hexContainer = document.createElement('div');
     this.hexContainer.className = 'receive-panel__hex-container monospace';
     this.hexContent = document.createElement('div');
     this.hexContent.className = 'receive-panel__hex-content';
     this.hexContainer.appendChild(this.hexContent);
-    this.rightPane.appendChild(this.hexContainer);
+    this.rightPane.append(hexHeader, this.hexContainer);
 
     body.append(this.leftPane, this.resizeHandle, this.rightPane);
     this.el.append(header, body);
