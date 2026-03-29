@@ -160,8 +160,10 @@ export class SendPanel {
 
   private _send(): void {
     const text = this.inputEl.value;
-    if (!text || !this.connected) return;
-    this.callbacks?.onSend(text, this.format, this.lineEndingSelect.value as LineEnding);
+    const lineEnding = this.lineEndingSelect.value as LineEnding;
+    if (!this.connected) return;
+    if (!text && lineEnding === 'none') return;
+    this.callbacks?.onSend(text, this.format, lineEnding);
     if (this.clearCheckbox.checked) {
       this.inputEl.value = '';
       this.warningEl.hidden = true;
