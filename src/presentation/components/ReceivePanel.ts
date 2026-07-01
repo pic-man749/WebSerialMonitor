@@ -32,6 +32,7 @@ export class ReceivePanel {
   private readonly leftPane: HTMLDivElement;
   private readonly rightPane: HTMLDivElement;
   private readonly pauseBtn: HTMLButtonElement;
+  private readonly counterEl: HTMLSpanElement;
 
   // State
   private buffer: Uint8Array = new Uint8Array(0);
@@ -39,6 +40,8 @@ export class ReceivePanel {
   private isPaused = false;
   private textAutoScroll = true;
   private hexAutoScroll = true;
+  private rxBytes = 0;
+  private txBytes = 0;
 
   constructor(private readonly bus: EventBus) {
     this.el = document.createElement('section');
@@ -52,6 +55,10 @@ export class ReceivePanel {
     const title = document.createElement('span');
     title.className = 'panel__title';
     title.textContent = '受信';
+
+    this.counterEl = document.createElement('span');
+    this.counterEl.className = 'receive-panel__byte-counter';
+    this.counterEl.textContent = 'RX: 0 B  TX: 0 B';
 
     const actions = document.createElement('div');
     actions.className = 'panel__actions';
@@ -71,7 +78,7 @@ export class ReceivePanel {
     clearBtn.addEventListener('click', () => this.bus.emit('ui:clearReceiveBuffer'));
 
     actions.append(this.pauseBtn, clearBtn);
-    header.append(title, actions);
+    header.append(title, this.counterEl, actions);
 
     // Body (split panes)
     const body = document.createElement('div');
@@ -142,7 +149,13 @@ export class ReceivePanel {
 
     // EventBus hooks
     this.bus.on('serial:dataReceived', ({ chunk }) => {
+      this.rxBytes += chunk.data.length;
+      this._updateCounter();
       this.appendData(chunk.data);
+    });
+    this.bus.on('serial:dataSent', ({ message }) => {
+      this.txBytes += message.data.length;
+      this._updateCounter();
     });
     this.bus.on('ui:clearReceiveBuffer', () => this.clear());
     this.bus.on('ui:pauseReceive', () => this._setPaused(true));
@@ -176,6 +189,9 @@ export class ReceivePanel {
     this.textView.textContent = '';
     this.hexContent.textContent = '';
     this.hexContent.style.height = '0px';
+    this.rxBytes = 0;
+    this.txBytes = 0;
+    this._updateCounter();
   }
 
   // ---- Text view -------------------------------------------------------
@@ -377,6 +393,16 @@ export class ReceivePanel {
   }
 
   // ---- Helpers ---------------------------------------------------------
+
+  private _formatBytes(n: number): string {
+    if (n < 1024) return `${n} B`;
+    if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KiB`;
+    return `${(n / (1024 * 1024)).toFixed(1)} MiB`;
+  }
+
+  private _updateCounter(): void {
+    this.counterEl.textContent = `RX: ${this._formatBytes(this.rxBytes)}  TX: ${this._formatBytes(this.txBytes)}`;
+  }
 
   private _isAtBottom(el: HTMLElement): boolean {
     return el.scrollHeight - el.scrollTop - el.clientHeight < 2;
