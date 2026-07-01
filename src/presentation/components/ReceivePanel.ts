@@ -394,14 +394,8 @@ export class ReceivePanel {
 
   // ---- Helpers ---------------------------------------------------------
 
-  private _formatBytes(n: number): string {
-    if (n < 1024) return `${n} B`;
-    if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KiB`;
-    return `${(n / (1024 * 1024)).toFixed(1)} MiB`;
-  }
-
   private _updateCounter(): void {
-    this.counterEl.textContent = `RX: ${this._formatBytes(this.rxBytes)}  TX: ${this._formatBytes(this.txBytes)}`;
+    this.counterEl.textContent = `RX: ${this.rxBytes.toLocaleString()} B  TX: ${this.txBytes.toLocaleString()} B`;
   }
 
   private _isAtBottom(el: HTMLElement): boolean {
